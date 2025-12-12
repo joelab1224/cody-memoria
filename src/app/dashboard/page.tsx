@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { Card, CardContent } from "@/components/ui/Card";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import Link from "next/link";
@@ -57,7 +57,12 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F7F5F3] via-[#E8D5B7] to-[#7A8A76]">
+    <>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+      <SignedIn>
+        <div className="min-h-screen bg-gradient-to-br from-[#F7F5F3] via-[#E8D5B7] to-[#7A8A76]">
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-[20px] bg-[rgba(247,245,243,0.8)] border-b border-[rgba(122,138,118,0.3)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -276,7 +281,9 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
-    </div>
+        </div>
+      </SignedIn>
+    </>
   );
 }
 
