@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { CreateMemoryWizard } from '@/components/memory/CreateMemoryWizard';
+import { CreateMemoryWizard } from '@/components/memory/CreateMemoryWizardPt2';
 
 export default function CreateMemoryPage() {
   const router = useRouter();
