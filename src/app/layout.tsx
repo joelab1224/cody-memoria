@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { LanguageProvider } from "@/context/LanguageContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,13 +33,15 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </html>
+      <LanguageProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            {children}
+          </body>
+        </html>
+      </LanguageProvider>
     </ClerkProvider>
   );
 }

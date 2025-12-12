@@ -2,9 +2,12 @@
 
 import { SignIn } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function LoginPage() {
-  const [particles, setParticles] = useState<JSX.Element[]>([]);
+  const { t } = useLanguage();
+  const [particles, setParticles] = useState<React.ReactElement[]>([]);
 
   useEffect(() => {
     // Create floating particles
@@ -32,6 +35,10 @@ export default function LoginPage() {
         {/* Main content */}
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="w-full max-w-md">
+            {/* Language Selector */}
+            <div className="absolute top-4 right-4 z-50">
+              <LanguageSelector />
+            </div>
             {/* Logo */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-3 mb-4">
@@ -50,14 +57,14 @@ export default function LoginPage() {
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  Cody Memoria
+                  {t.common.appName}
                 </h1>
               </div>
               <p
                 className="text-base font-light"
                 style={{ color: "var(--text-light)" }}
               >
-                Preserving precious family memories
+                {t.landing.hero.badge}
               </p>
             </div>
 
@@ -77,13 +84,13 @@ export default function LoginPage() {
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  Welcome Back
+                  {t.login.title}
                 </h2>
                 <p
                   className="text-sm font-light"
                   style={{ color: "var(--text-light)" }}
                 >
-                  Sign in to continue your journey
+                  {t.login.subtitle}
                 </p>
               </div>
 
@@ -139,13 +146,13 @@ export default function LoginPage() {
               className="text-center mt-6 text-sm font-light"
               style={{ color: "var(--text-light)" }}
             >
-              New to Cody Memoria?{" "}
+              {t.login.newToApp}{" "}
               <a
                 href="/register"
                 className="font-normal transition-colors hover:underline"
                 style={{ color: "var(--sage)" }}
               >
-                Create an account
+                {t.login.createAccount}
               </a>
             </p>
           </div>

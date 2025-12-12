@@ -359,7 +359,7 @@ export default function ExamplesPage() {
                 <h4 className="font-medium text-[#5A6B59] text-sm">Primary Actions</h4>
                 <div className="space-y-2">
                   <Button variant="primary" size="lg" className="w-full">Large Primary</Button>
-                  <Button variant="primary" size="md" className="w-full">Medium Primary</Button>
+                  <Button variant="primary" size="default" className="w-full">Medium Primary</Button>
                   <Button variant="primary" size="sm" className="w-full">Small Primary</Button>
                 </div>
               </div>
@@ -368,7 +368,7 @@ export default function ExamplesPage() {
                 <h4 className="font-medium text-[#5A6B59] text-sm">Secondary</h4>
                 <div className="space-y-2">
                   <Button variant="secondary" size="lg" className="w-full">Large Secondary</Button>
-                  <Button variant="secondary" size="md" className="w-full">Medium Secondary</Button>
+                  <Button variant="secondary" size="default" className="w-full">Medium Secondary</Button>
                   <Button variant="secondary" size="sm" className="w-full">Small Secondary</Button>
                 </div>
               </div>
@@ -376,9 +376,9 @@ export default function ExamplesPage() {
               <div className="space-y-3">
                 <h4 className="font-medium text-[#5A6B59] text-sm">Outline & Ghost</h4>
                 <div className="space-y-2">
-                  <Button variant="outline" size="md" className="w-full">Outline</Button>
-                  <Button variant="ghost" size="md" className="w-full">Ghost</Button>
-                  <Button variant="outline" size="md" leftIcon={<UserIcon />} className="w-full">With Icon</Button>
+                  <Button variant="outline" size="default" className="w-full">Outline</Button>
+                  <Button variant="ghost" size="default" className="w-full">Ghost</Button>
+                  <Button variant="outline" size="default" leftIcon={<UserIcon />} className="w-full">With Icon</Button>
                 </div>
               </div>
               
