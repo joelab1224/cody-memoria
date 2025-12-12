@@ -127,6 +127,12 @@ export const texts = {
       recentMemories: 'Recent Memories',
       noMemories: 'No memories yet',
       createFirstMemory: 'Create your first memory to get started',
+      filters: {
+        all: 'All',
+        recent: 'Recent',
+        favorites: 'Favorites',
+        search: 'Search memories...',
+      },
     },
 
     // Memory
@@ -277,6 +283,12 @@ export const texts = {
       recentMemories: 'Recuerdos Recientes',
       noMemories: 'Aún no hay recuerdos',
       createFirstMemory: 'Crea tu primer recuerdo para comenzar',
+      filters: {
+        all: 'Todos',
+        recent: 'Recientes',
+        favorites: 'Favoritos',
+        search: 'Buscar recuerdos...',
+      },
     },
 
     // Memory

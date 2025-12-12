@@ -1,24 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
     const { id } = await params;
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const memory = await prisma.memory.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        userId,
       },
     });
 
@@ -41,10 +40,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
     const { id } = await params;
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -54,7 +53,7 @@ export async function PUT(
     const existing = await prisma.memory.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        userId,
       },
     });
 
@@ -92,10 +91,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const { userId } = await auth();
     const { id } = await params;
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -103,7 +102,7 @@ export async function DELETE(
     const existing = await prisma.memory.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        userId,
       },
     });
 
