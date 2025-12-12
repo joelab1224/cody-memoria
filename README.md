@@ -1,36 +1,235 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cody Memoria Agent
 
-## Getting Started
+An empathetic AI conversational agent designed to curate family history through natural voice interviews, directly addressing the problem of irreplaceable stories being lost. Leveraging existing voice technology, intelligent dialogue management, and a modular architecture, the agent guides family members through themed interviews, asking culturally sensitive, context-aware follow-up questions to explore rich details.
 
-First, run the development server:
+## 🌟 Features
+
+- **User Authentication**: Secure login with NextAuth.js supporting email/password and OAuth providers
+- **User Profiling**: Onboarding flow focused on emotional preferences and objectives for creating memories
+- **Memory Creation**: Multi-step process to capture details about loved ones
+- **Voice Cloning**: Integration with ElevenLabs for voice synthesis from uploaded audio samples
+- **AI Avatars**: Anam.ai powered conversational avatars with custom personas
+- **Interactive Conversations**: Real-time chat with memory avatars using voice and text
+- **File Management**: Upload photos and audio files with Vercel Blob storage
+- **Memory Exploration**: Browse and search memories by person, theme, or time period
+
+## 🚀 Technology Stack
+
+- **Framework**: Next.js 14 with App Router
+- **Styling**: Tailwind CSS + Shadcn/ui components
+- **Authentication**: NextAuth.js (Auth.js)
+- **Database**: PostgreSQL with Prisma ORM
+- **AI Services**: 
+  - Anam.ai API for conversational AI avatars
+  - ElevenLabs API for voice synthesis and cloning
+- **File Storage**: Vercel Blob for images and audio
+- **State Management**: Zustand for client-side state
+- **Deployment**: Vercel
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js 18.0 or later
+- npm or yarn
+- PostgreSQL database
+- Git
+
+## 🛠️ Installation & Setup
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd cody-memoria
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Setup
+
+Copy the example environment file and configure your variables:
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in the required environment variables:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/cody-memoria"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key-here"
+
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Anam.ai API
+ANAM_API_KEY="your-anam-api-key"
+
+# ElevenLabs API
+ELEVENLABS_API_KEY="your-elevenlabs-api-key"
+
+# Vercel Blob Storage
+BLOB_READ_WRITE_TOKEN="your-vercel-blob-token"
+```
+
+### 4. Database Setup
+
+Initialize and migrate the database:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 5. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+cody-memoria/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── (auth)/            # Authentication pages (grouped)
+│   │   │   ├── login/
+│   │   │   └── register/
+│   │   ├── dashboard/         # Main dashboard
+│   │   ├── profile/           # User profile management
+│   │   ├── memories/          # Memory management
+│   │   │   ├── create/        # Memory creation flow
+│   │   │   ├── [id]/          # Individual memory view
+│   │   │   └── chat/[id]/     # Memory conversation interface
+│   │   └── api/               # API routes
+│   │       ├── auth/          # NextAuth endpoints
+│   │       ├── memories/      # Memory CRUD operations
+│   │       ├── upload/        # File upload handling
+│   │       ├── anam/          # Anam.ai integration
+│   │       └── elevenlabs/    # ElevenLabs integration
+│   ├── components/            # React components
+│   │   ├── ui/               # Shadcn/ui components
+│   │   ├── auth/             # Authentication components
+│   │   ├── memory/           # Memory-related components
+│   │   └── chat/             # Chat interface components
+│   ├── lib/                  # Utility libraries
+│   │   ├── auth.ts           # NextAuth configuration
+│   │   ├── db.ts             # Prisma client
+│   │   ├── anam.ts           # Anam.ai API client
+│   │   ├── elevenlabs.ts     # ElevenLabs API client
+│   │   └── utils.ts          # General utilities
+│   └── types/                # TypeScript type definitions
+├── prisma/                   # Database schema and migrations
+└── public/                   # Static assets
+```
 
-## Learn More
+## 🔧 API Integration
 
-To learn more about Next.js, take a look at the following resources:
+### Anam.ai Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Sign up for an Anam.ai account
+2. Create an API key in your dashboard
+3. Add the key to your `.env.local` file as `ANAM_API_KEY`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ElevenLabs Setup
 
-## Deploy on Vercel
+1. Create an ElevenLabs account
+2. Generate an API key from your profile
+3. Add the key to your `.env.local` file as `ELEVENLABS_API_KEY`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel Blob Storage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Create a Vercel account and project
+2. Enable Blob storage in your project settings
+3. Copy the read/write token to your environment variables
+
+## 📝 Usage
+
+### Creating a Memory
+
+1. Navigate to the dashboard
+2. Click "Create New Memory"
+3. Fill in details about your loved one:
+   - Name and relationship
+   - Personality traits
+   - Favorite memories
+   - Upload a photo (optional)
+   - Upload voice samples for cloning
+4. The system will create an AI persona based on the information
+
+### Chatting with Memories
+
+1. Select a memory from your dashboard
+2. Click "Start Conversation"
+3. The AI avatar will engage in natural conversation
+4. Voice responses are generated using the cloned voice
+5. All conversations are saved and searchable
+
+## 🚀 Deployment
+
+### Vercel Deployment
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Configure environment variables in Vercel dashboard
+4. Deploy!
+
+### Database Deployment
+
+For production, use a managed PostgreSQL service:
+- Vercel Postgres
+- Supabase
+- Railway
+- AWS RDS
+
+## 🛡️ Security & Privacy
+
+- All data is encrypted in transit and at rest
+- Voice samples and conversations are securely stored
+- GDPR compliant data handling
+- User data deletion capabilities
+- Secure authentication with NextAuth.js
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+
+1. Check the existing issues on GitHub
+2. Create a new issue with detailed information
+3. Contact support at [your-email@domain.com]
+
+## 🙏 Acknowledgments
+
+- Anam.ai for conversational AI technology
+- ElevenLabs for voice cloning capabilities
+- Vercel for hosting and blob storage
+- The open-source community for the amazing tools and libraries
+
+---
+
+Made with ❤️ for preserving precious family memories.

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cody Memoria - Digital Heirloom Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-navy: #1A237E;
+            --burgundy: #8D1538;
+            --ivory: #F5F5DC;
+            --gold: #FFD700;
+            --bronze: #CD853F;
+            --glass-bg: rgba(26, 35, 126, 0.15);
+            --glass-border: rgba(255, 215, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--burgundy) 50%, #2C1810 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: var(--ivory);
+        }
+
+        /* Vintage texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(141, 21, 56, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Floating golden dust particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: antiqueDrift 25s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        @keyframes antiqueDrift {
+            0% {
+                transform: translateY(100vh) translateX(-20px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(50vh) translateX(20px) rotate(180deg);
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) translateX(-30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Elegant breathing animation */
+        @keyframes elegantBreathe {
+            0%, 100% {
+                transform: scale(1) rotateX(0deg);
+                backdrop-filter: blur(25px);
+            }
+            50% {
+                transform: scale(1.01) rotateX(1deg);
+                backdrop-filter: blur(30px);
+            }
+        }
+
+        /* Premium glass morphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 
+                        inset 0 1px 0 rgba(255, 215, 0, 0.1);
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+        }
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.5;
+        }
+
+        .glass:hover {
+            background: rgba(26, 35, 126, 0.25);
+            backdrop-filter: blur(35px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 215, 0, 0.2),
+                        0 0 30px rgba(255, 215, 0, 0.1);
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        /* Header */
+        .header {
+            padding: 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: elegantBreathe 8s ease-in-out infinite;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: var(--gold);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .logo::before {
+            content: '👑';
+            animation: crownGlow 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+
+        @keyframes crownGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--ivory);
+            text-decoration: none;
+            transition: all 0.6s ease;
+            font-family: 'Arial', sans-serif;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover {
+            background: var(--gold);
+            color: var(--deep-navy);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Main container */
+        .main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .memory-card {
+            padding: 2.5rem;
+            animation: elegantBreathe 12s ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.2), rgba(141, 21, 56, 0.1));
+        }
+
+        .memory-card:nth-child(2) { --delay: 2s; }
+        .memory-card:nth-child(3) { --delay: 4s; }
+
+        .memory-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--bronze));
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+        }
+
+        .memory-avatar::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent 0deg, rgba(255,255,255,0.4) 45deg, transparent 90deg);
+            animation: luxuryRotate 4s linear infinite;
+        }
+
+        @keyframes luxuryRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .memory-title {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 1px 5px rgba(255, 215, 0, 0.3);
+        }
+
+        .memory-subtitle {
+            color: var(--ivory);
+            font-family: 'Arial', sans-serif;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        /* Memory creation flow */
+        .creation-flow {
+            margin: 4rem 0;
+            padding: 3.5rem;
+            animation: elegantBreathe 15s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.25), rgba(141, 21, 56, 0.15));
+        }
+
+        .flow-title {
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 3rem;
+            text-shadow: 0 2px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 20px;
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .flow-step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -1.5rem;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), var(--bronze));
+            transform: translateY(-50%);
+            opacity: 0.6;
+        }
+
+        .flow-step:last-child::before {
+            display: none;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-15px) scale(1.05);
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            animation: luxuryBounce 3s ease-in-out infinite;
+            animation-delay: calc(var(--step) * 0.4s);
+            filter: drop-shadow(0 5px 10px rgba(255, 215, 0, 0.3));
+        }
+
+        @keyframes luxuryBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.1); }
+        }
+
+        .flow-step h4 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .flow-step p {
+            color: var(--ivory);
+            opacity: 0.9;
+        }
+
+        /* Chat interface */
+        .chat-interface {
+            margin: 4rem 0;
+            padding: 3rem;
+            animation: elegantBreathe 10s ease-in-out infinite;
+            animation-delay: 3s;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.2), rgba(141, 21, 56, 0.1));
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .chat-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--burgundy), var(--gold));
+            animation: royalPulse 3s ease-in-out infinite;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        @keyframes royalPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+        }
+
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem 0;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 18px;
+            max-width: 75%;
+            animation: luxurySlideIn 1s ease-out;
+            position: relative;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.3), rgba(255, 215, 0, 0.1));
+            margin-left: auto;
+            border-bottom-right-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .message.ai {
+            background: linear-gradient(135deg, rgba(141, 21, 56, 0.3), rgba(205, 133, 63, 0.1));
+            border-bottom-left-radius: 8px;
+            border: 1px solid rgba(205, 133, 63, 0.2);
+        }
+
+        @keyframes luxurySlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 1.25rem;
+            border: none;
+            background: rgba(26, 35, 126, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            color: var(--ivory);
+            font-family: 'Arial', sans-serif;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.6s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            background: rgba(26, 35, 126, 0.3);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+            border-color: var(--gold);
+        }
+
+        .input-field::placeholder {
+            color: rgba(245, 245, 220, 0.6);
+        }
+
+        .send-button {
+            padding: 1.25rem 2.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--bronze));
+            color: var(--deep-navy);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .send-button:hover::before {
+            left: 100%;
+        }
+
+        .send-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 4rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1.5rem 3rem;
+            background: linear-gradient(135deg, var(--burgundy), var(--gold));
+            color: var(--ivory);
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(141, 21, 56, 0.4);
+            border-color: var(--gold);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-step::before {
+                display: none;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .flow-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particles">
+        <div class="particle" style="left: 5%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 15%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 9s;"></div>
+        <div class="particle" style="left: 45%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 55%; animation-delay: 15s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 18s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 21s;"></div>
+        <div class="particle" style="left: 85%; animation-delay: 24s;"></div>
+        <div class="particle" style="left: 95%; animation-delay: 27s;"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header glass">
+        <div class="logo">Cody Memoria</div>
+        <nav class="nav">
+            <a href="#" class="nav-item">Dashboard</a>
+            <a href="#" class="nav-item">Memories</a>
+            <a href="#" class="nav-item">Profile</a>
+            <a href="#" class="nav-item">Settings</a>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+        <!-- Dashboard grid -->
+        <div class="dashboard-grid">
+            <div class="memory-card glass">
+                <div class="memory-avatar"></div>
+                <h3 class="memory-title">Grandma Rose</h3>
+                <p class="memory-subtitle">Beloved grandmother • Created 3 days ago</p>
+            </div>
+            <div class="memory-card glass">
+                <div class="memory-avatar"></div>
+                <h3 class="memory-title">Uncle Marcus</h3>
+                <p class="memory-subtitle">Family storyteller • Created 1 week ago</p>
+            </div>
+            <div class="memory-card glass">
+                <div class="memory-avatar"></div>
+                <h3 class="memory-title">Dad</h3>
+                <p class="memory-subtitle">My hero • Created 2 weeks ago</p>
+            </div>
+        </div>
+
+        <!-- Memory creation flow -->
+        <div class="creation-flow glass">
+            <h2 class="flow-title">Create a New Memory</h2>
+            <div class="flow-steps">
+                <div class="flow-step" style="--step: 1;">
+                    <span class="step-icon">👤</span>
+                    <h4>Person Details</h4>
+                    <p>Name, relationship, personality</p>
+                </div>
+                <div class="flow-step" style="--step: 2;">
+                    <span class="step-icon">📸</span>
+                    <h4>Upload Photo</h4>
+                    <p>Avatar image</p>
+                </div>
+                <div class="flow-step" style="--step: 3;">
+                    <span class="step-icon">🎤</span>
+                    <h4>Voice Sample</h4>
+                    <p>Audio for cloning</p>
+                </div>
+                <div class="flow-step" style="--step: 4;">
+                    <span class="step-icon">💭</span>
+                    <h4>Memories</h4>
+                    <p>Stories and traits</p>
+                </div>
+                <div class="flow-step" style="--step: 5;">
+                    <span class="step-icon">✨</span>
+                    <h4>AI Persona</h4>
+                    <p>Generated avatar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat interface -->
+        <div class="chat-interface glass">
+            <div class="chat-header">
+                <div class="chat-avatar"></div>
+                <div>
+                    <h3 style="color: var(--gold);">Chatting with Grandma Rose</h3>
+                    <p style="color: var(--ivory); opacity: 0.8;">Online • Voice enabled</p>
+                </div>
+            </div>
+            <div class="chat-messages">
+                <div class="message ai">
+                    <p>Hello dear! I've been waiting to talk with you. How was your day?</p>
+                </div>
+                <div class="message user">
+                    <p>Hi Grandma! It's so good to hear your voice again. I had a challenging day at work, but talking to you always makes me feel better.</p>
+                </div>
+                <div class="message ai">
+                    <p>Oh sweetheart, you know what I always used to say - "Every storm runs out of rain." Tell me what's troubling you.</p>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" class="input-field" placeholder="Type your message...">
+                <button class="send-button">🎤 Speak</button>
+                <button class="send-button">Send</button>
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-buttons">
+            <button class="btn-primary">Create New Memory</button>
+            <button class="btn-primary">Explore Memories</button>
+            <button class="btn-primary">Settings</button>
+        </div>
+    </main>
+</body>
+</html>
