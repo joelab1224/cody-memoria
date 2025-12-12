@@ -106,7 +106,7 @@ export default function ExamplesPage() {
                   animation="shimmer" 
                   fallback="JD"
                   showStatus
-                  statusColor="away"
+                  statusColor="offline"
                 />
                 <div>
                   <h3 className="text-lg font-medium text-[#3A4B39]">Dad</h3>
@@ -163,7 +163,7 @@ export default function ExamplesPage() {
                     size="voice" 
                     animation={isRecording ? "pulse" : "shimmer"}
                     showStatus
-                    statusColor={isRecording ? "recording" : "online"}
+                    statusColor={isRecording ? "speaking" : "online"}
                     fallback="GR"
                   />
                   {isRecording && (

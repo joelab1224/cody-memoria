@@ -1,65 +1,300 @@
+"use client";
+
+import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Hero Section */}
+      <section className="pt-16 relative overflow-hidden dark:bg-[#171F2E]">
+        <div className="max-w-[120rem] mx-auto relative">
+          <div className="container px-5 mx-auto sm:px-7">
+            <div className="max-w-[800px] mx-auto">
+              <div className="text-center pb-16">
+                <div className="rounded-full mb-6 max-w-fit mx-auto bg-linear-to-r from-[#FF58D580] to-[#4E6EFF80] p-0.5">
+                  <div className="bg-white dark:bg-dark-primary py-2 text-sm items-center gap-2 px-5 inline-flex dark:text-white/90 rounded-full">
+                    <span>✨</span>
+                    <p>Preserving precious family memories</p>
+                  </div>
+                </div>
+
+                <h1 className="text-gray-700 mx-auto font-bold mb-4 text-4xl sm:text-[50px] dark:text-white/90 sm:leading-[64px] max-w-[700px]">
+                  Keep your loved ones close forever with AI-powered memories
+                </h1>
+                <p className="max-w-[537px] text-center mx-auto dark:text-gray-400 text-gray-500 text-base">
+                  An empathetic AI that helps you preserve family stories through
+                  natural conversations. Create interactive memories of your loved
+                  ones with voice and personality.
+                </p>
+
+                <div className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center">
+                  <SignedOut>
+                    <SignUpButton mode="modal">
+                      <button 
+                        className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
+                        style={{
+                          background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                        }}
+                      >
+                        Get Started Free
+                      </button>
+                    </SignUpButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <Link
+                      href="/dashboard"
+                      className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
+                      style={{
+                        background: "linear-gradient(135deg, var(--sage-dark), var(--sage))",
+                      }}
+                    >
+                      Go to Dashboard
+                    </Link>
+                  </SignedIn>
+                  <button className="rounded-full video-popup flex h-12 gap-3 items-center text-sm border bg-white dark:bg-white/10 dark:border-white/[0.05] dark:text-white border-gray-100 p-1.5 pr-6">
+                    <span 
+                      className="size-9 rounded-full inline-flex items-center justify-center text-sm font-medium"
+                      style={{
+                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                      }}
+                    >
+                      <svg
+                        width="16"
+                        height="17"
+                        viewBox="0 0 16 17"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3.5 3.71077L3.5 12.3482C3.5 13.5211 4.78545 14.2402 5.78489 13.6265L12.8183 9.30776C13.7717 8.7223 13.7717 7.33672 12.8183 6.75125L5.7849 2.43251C4.78545 1.81882 3.5 2.53795 3.5 3.71077Z"
+                          fill="white"
+                        />
+                      </svg>
+                    </span>
+                    Watch Demo
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="max-w-[1000px] mx-auto relative">
+              <div className="p-3 sm:p-[18px] relative z-30 rounded-[32px] border border-white/30 dark:border-white/10 bg-white/20">
+                <div className="w-full rounded-2xl block bg-gradient-to-br from-[#E6B8A2] via-[#B8952F] to-[#7A8A76] p-12 min-h-[400px] flex items-center justify-center">
+                  <div className="grid md:grid-cols-3 gap-6 w-full">
+                    {[
+                      {
+                        name: "Grandma Rose",
+                        relationship: "Beloved Grandmother",
+                        gradient: "linear-gradient(135deg, #E6B8A2, #B8952F)",
+                      },
+                      {
+                        name: "Uncle Marcus",
+                        relationship: "Family Storyteller",
+                        gradient: "linear-gradient(135deg, #7A8A76, #E6B8A2)",
+                      },
+                      {
+                        name: "Dad",
+                        relationship: "My Hero",
+                        gradient: "linear-gradient(135deg, #B8952F, #7A8A76)",
+                      },
+                    ].map((memory, i) => (
+                      <div
+                        key={i}
+                        className="text-center p-6 rounded-2xl bg-white/90 backdrop-blur-sm"
+                      >
+                        <div
+                          className="w-20 h-20 rounded-full mx-auto mb-4"
+                          style={{
+                            background: memory.gradient,
+                          }}
+                        />
+                        <h3 className="font-medium mb-1 text-gray-800">
+                          {memory.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {memory.relationship}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Core Features Section */}
+      <section className="py-30 bg-gray-50 dark:bg-white/1 px-5">
+        <div className="max-w-[72rem] mx-auto">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 font-bold text-gray-800 text-3xl dark:text-white/90 md:text-title-lg max-w-xl mx-auto">
+              Everything you need to preserve memories
+            </h2>
+
+            <p className="max-w-xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
+              Powerful features designed with empathy and care to help you keep
+              your family stories alive forever.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            {[
+              {
+                icon: "🎙️",
+                title: "Voice Cloning",
+                description:
+                  "Capture the unique voice of your loved ones using advanced AI voice cloning technology.",
+              },
+              {
+                icon: "💬",
+                title: "Natural Conversations",
+                description:
+                  "Have meaningful conversations with AI avatars that remember stories and personality traits.",
+              },
+              {
+                icon: "📸",
+                title: "Memory Creation",
+                description:
+                  "Create rich profiles with photos, stories, and personality details in a simple guided flow.",
+              },
+              {
+                icon: "🤖",
+                title: "AI Avatars",
+                description:
+                  "Interactive avatars powered by advanced AI that respond with context and emotion.",
+              },
+              {
+                icon: "🔍",
+                title: "Memory Exploration",
+                description:
+                  "Browse and search your memories by person, theme, or time period with ease.",
+              },
+              {
+                icon: "🔒",
+                title: "Private & Secure",
+                description:
+                  "Your memories are encrypted and stored securely. You control who can access them.",
+              },
+            ].map((feature, i) => (
+              <div
+                key={i}
+                className="bg-white p-9 border border-gray-200 dark:bg-white/5 dark:border-white/3 rounded-[20px] shadow-[0px_30px_50px_-32px_rgba(107,110,148,0.04)]"
+              >
+                <div className="text-4xl mb-9">{feature.icon}</div>
+
+                <h3 className="mb-4 text-gray-800 dark:text-white/90 font-bold text-xl md:text-2xl">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-14 md:py-28 dark:bg-dark-primary">
+        <div className="container px-5 mx-auto sm:px-7">
+          <div className="max-w-2xl mx-auto mb-12 text-center">
+            <h2 className="mb-3 font-bold text-center text-gray-800 dark:text-white/90 text-3xl md:text-title-lg">
+              How it works
+            </h2>
+            <p className="max-w-2xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
+              Create your first memory in just a few simple steps
+            </p>
+          </div>
+
+          <div className="max-w-[1008px] mx-auto">
+            <div className="bg-white dark:bg-white/5 p-8 md:p-12 rounded-[20px] border border-gray-200 dark:border-white/10">
+              <div className="grid md:grid-cols-5 gap-6">
+                {[
+                  { step: "1", title: "Add Details", desc: "Name, relationship, personality" },
+                  { step: "2", title: "Upload Photo", desc: "Add a photo for the avatar" },
+                  { step: "3", title: "Voice Sample", desc: "Record or upload audio" },
+                  { step: "4", title: "Memories", desc: "Share stories and traits" },
+                  { step: "5", title: "Chat", desc: "Start conversations" },
+                ].map((step, i) => (
+                  <div key={i} className="text-center">
+                    <div 
+                      className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-lg font-medium text-white"
+                      style={{
+                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                      }}
+                    >
+                      {step.step}
+                    </div>
+                    <h4 className="font-medium mb-2 text-sm text-gray-800 dark:text-white/90">
+                      {step.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {step.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-14 md:py-28">
+        <div className="container px-5 mx-auto sm:px-7">
+          <div className="max-w-4xl mx-auto">
+            <div 
+              className="p-12 md:p-16 rounded-[20px] text-center"
+              style={{
+                background: "linear-gradient(135deg, var(--sage), var(--soft-gold), var(--peach))",
+              }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                Ready to preserve your memories?
+              </h2>
+              <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                Join families around the world who are keeping their loved ones
+                close through technology.
+              </p>
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button 
+                    className="px-10 py-5 rounded-full text-lg font-medium bg-white hover:bg-gray-50 transition-colors"
+                    style={{ color: "var(--sage-dark)" }}
+                  >
+                    Get Started Free
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Link
+                  href="/dashboard"
+                  className="inline-block px-10 py-5 rounded-full text-lg font-medium bg-white hover:bg-gray-50 transition-colors"
+                  style={{ color: "var(--sage-dark)" }}
+                >
+                  Go to Dashboard
+                </Link>
+              </SignedIn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style jsx global>{`
+        .text-title-lg {
+          font-size: 44px;
+          line-height: 52px;
+        }
+
+        @media (max-width: 768px) {
+          .text-title-lg {
+            font-size: 32px;
+            line-height: 40px;
+          }
+        }
+      `}</style>
+    </>
   );
 }
