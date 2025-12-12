@@ -15,8 +15,8 @@ export type { AvatarProps } from './Avatar';
 export { Input, inputVariants } from './Input';
 export type { InputProps } from './Input';
 
-export { Textarea, textareaVariants } from './Textarea';
-export type { TextareaProps } from './Textarea';
+export { Textarea, textareaVariants } from './textarea';
+export type { TextareaProps } from './textarea';
 
 export { 
   Card, 
