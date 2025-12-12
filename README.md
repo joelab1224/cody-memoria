@@ -4,7 +4,7 @@ An empathetic AI conversational agent designed to curate family history through 
 
 ## 🌟 Features
 
-- **User Authentication**: Secure login with NextAuth.js supporting email/password and OAuth providers
+- **User Authentication**: Secure login with Clerk supporting email/password and OAuth providers
 - **User Profiling**: Onboarding flow focused on emotional preferences and objectives for creating memories
 - **Memory Creation**: Multi-step process to capture details about loved ones
 - **Voice Cloning**: Integration with ElevenLabs for voice synthesis from uploaded audio samples
@@ -17,7 +17,7 @@ An empathetic AI conversational agent designed to curate family history through 
 
 - **Framework**: Next.js 14 with App Router
 - **Styling**: Tailwind CSS + Shadcn/ui components
-- **Authentication**: NextAuth.js (Auth.js)
+- **Authentication**: Clerk
 - **Database**: PostgreSQL with Prisma ORM
 - **AI Services**: 
   - Anam.ai API for conversational AI avatars
@@ -64,13 +64,9 @@ Fill in the required environment variables:
 # Database
 DATABASE_URL="postgresql://username:password@localhost:5432/cody-memoria"
 
-# NextAuth
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+CLERK_SECRET_KEY=YOUR_SECRET_KEY
 
 # Anam.ai API
 ANAM_API_KEY="your-anam-api-key"
@@ -115,7 +111,7 @@ cody-memoria/
 │   │   │   ├── [id]/          # Individual memory view
 │   │   │   └── chat/[id]/     # Memory conversation interface
 │   │   └── api/               # API routes
-│   │       ├── auth/          # NextAuth endpoints
+│   │       ├── auth/          # Clerk authentication endpoints
 │   │       ├── memories/      # Memory CRUD operations
 │   │       ├── upload/        # File upload handling
 │   │       ├── anam/          # Anam.ai integration
@@ -137,6 +133,16 @@ cody-memoria/
 ```
 
 ## 🔧 API Integration
+
+### Clerk Setup
+
+1. Sign up for a Clerk account at [clerk.com](https://clerk.com)
+2. Create a new application in your Clerk Dashboard
+3. Navigate to the [API keys page](https://dashboard.clerk.com/last-active?path=api-keys) in your Clerk Dashboard
+4. Copy your Publishable Key and Secret Key
+5. Add them to your `.env.local` file:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Your publishable key
+   - `CLERK_SECRET_KEY` - Your secret key
 
 ### Anam.ai Setup
 
@@ -201,7 +207,7 @@ For production, use a managed PostgreSQL service:
 - Voice samples and conversations are securely stored
 - GDPR compliant data handling
 - User data deletion capabilities
-- Secure authentication with NextAuth.js
+- Secure authentication with Clerk
 
 ## 🤝 Contributing
 

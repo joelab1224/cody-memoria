@@ -81,6 +81,7 @@ model Memory {
   favoriteMemories String[]
   voiceCloneId     String?
   avatarImageUrl   String?
+  anamAvatarId     String?
   systemPrompt     String   @db.Text
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
