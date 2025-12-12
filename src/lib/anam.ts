@@ -1,4 +1,4 @@
-import { AnamPersonaConfig, AnamSessionOptions } from '@/types/anam';
+import { AnamPersonaConfig, AnamSessionOptions, AnamOneShotAvatarResponse } from '@/types/anam';
 
 const ANAM_API_BASE = 'https://api.anam.ai/v1';
 
@@ -10,7 +10,6 @@ export class AnamClient {
   }
 
   async createSessionToken(
-    clientLabel: string,
     personaConfig: AnamPersonaConfig,
     sessionOptions?: AnamSessionOptions
   ): Promise<{ sessionToken: string }> {
@@ -21,14 +20,62 @@ export class AnamClient {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        clientLabel,
         personaConfig,
         sessionOptions,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Anam API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Anam API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  async createOneShotAvatar(
+    imageFile: File | Blob,
+    displayName: string
+  ): Promise<AnamOneShotAvatarResponse> {
+    const formData = new FormData();
+    formData.append('displayName', displayName);
+    formData.append('imageFile', imageFile);
+
+    const response = await fetch(`${ANAM_API_BASE}/avatars`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Anam API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  async createOneShotAvatarFromUrl(
+    imageUrl: string,
+    displayName: string
+  ): Promise<AnamOneShotAvatarResponse> {
+    const formData = new FormData();
+    formData.append('displayName', displayName);
+    formData.append('imageUrl', imageUrl);
+
+    const response = await fetch(`${ANAM_API_BASE}/avatars`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Anam API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     return response.json();

@@ -1,16 +1,18 @@
 export interface AnamPersonaConfig {
   name: string;
   avatarId: string;
-  voiceId: string;
-  brainType: 'ANAM_GPT_4O_MINI_V1' | 'ANAM_LLAMA_v3_3_70B_V1' | 'CUSTOMER_CLIENT_V1';
-  systemPrompt: string;
-  maxSessionLengthSeconds: number;
+  voiceId?: string;
+  llmId?: string;
+  systemPrompt?: string;
+  maxSessionLengthSeconds?: number;
+  personaId?: string;
 }
 
 export interface AnamSessionOptions {
   sessionReplay?: {
     enableSessionReplay: boolean;
   };
+  disableInputAudio?: boolean;
 }
 
 export interface AnamAvatar {
@@ -31,4 +33,22 @@ export interface AnamVoice {
 export interface AnamSessionToken {
   sessionToken: string;
   expiresAt?: string;
+}
+
+export interface AnamOneShotAvatarResponse {
+  id: string;
+  name?: string;
+  status: 'processing' | 'ready' | 'failed';
+  createdAt: string;
+  imageUrl?: string;
+}
+
+export interface AnamClientOptions {
+  disableInputAudio?: boolean;
+}
+
+export interface AnamAudioInputStreamConfig {
+  encoding: 'pcm_s16le';
+  sampleRate: number;
+  channels: number;
 }
