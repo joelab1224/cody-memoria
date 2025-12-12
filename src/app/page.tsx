@@ -41,7 +41,7 @@ export default function Home() {
                       <button 
                         className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
                         style={{
-                          background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                          background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                         }}
                       >
                         {t.common.getStarted}
@@ -53,7 +53,7 @@ export default function Home() {
                       href="/dashboard"
                       className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage-dark), var(--sage))",
+                        background: "linear-gradient(135deg, #4A5D49, #7A8A76)",
                       }}
                     >
                       {t.common.goToDashboard}
@@ -63,7 +63,7 @@ export default function Home() {
                     <span 
                       className="size-9 rounded-full inline-flex items-center justify-center text-sm font-medium"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                        background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                       }}
                     >
                       <svg
@@ -221,7 +221,7 @@ export default function Home() {
                     <div 
                       className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-lg font-medium text-white"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                        background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                       }}
                     >
                       {step.step}
@@ -247,7 +247,7 @@ export default function Home() {
             <div 
               className="p-12 md:p-16 rounded-[20px] text-center"
               style={{
-                background: "linear-gradient(135deg, var(--sage), var(--soft-gold), var(--peach))",
+                background: "linear-gradient(135deg, #7A8A76, #B8952F, #E6B8A2)",
               }}
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
@@ -260,7 +260,7 @@ export default function Home() {
                 <SignUpButton mode="modal">
                   <button 
                     className="px-10 py-5 rounded-full text-lg font-medium bg-white hover:bg-gray-50 transition-colors"
-                    style={{ color: "var(--sage-dark)" }}
+                    style={{ color: "#4A5D49" }}
                   >
                     {t.common.getStarted}
                   </button>
