@@ -122,6 +122,7 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
   const [error, setError] = React.useState<string | null>(null);
   const [wizardData, setWizardData] = React.useState<StoredWizardData | null>(null);
   const [systemPrompt, setSystemPrompt] = React.useState<string>(FALLBACK_SYSTEM_PROMPT);
+  const [isLoadingData, setIsLoadingData] = React.useState(true);
 
   const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
 
@@ -133,10 +134,16 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
         const parsed = JSON.parse(raw) as StoredWizardData;
         setWizardData(parsed);
         setSystemPrompt(buildSystemPrompt(parsed));
+        // Surface any stored previews so the user sees what was captured
+        if (parsed.memoryData?.photoPreview) {
+          setAvatarImageUrl(parsed.memoryData.photoPreview);
+        }
       }
     } catch (loadError) {
       console.warn('Unable to load wizard data', loadError);
       setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
+    } finally {
+      setIsLoadingData(false);
     }
   }, []);
 
@@ -184,10 +191,15 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
     setError(null);
 
     try {
-      const memoryName = wizardData?.memoryData.name || 'Memory Avatar';
-      const relationship = wizardData?.memoryData.relationship || 'loved one';
-      const description = wizardData?.memoryData.description || '';
-      const traits = wizardData?.memoryData.personalityTraits || [];
+      if (!wizardData) {
+        throw new Error('No se encontró la información de la memoria. Regresa y completa el formulario.');
+      }
+
+      const memoryName = wizardData.memoryData.name || 'Memory Avatar';
+      const relationship = wizardData.memoryData.relationship || 'loved one';
+      const description = wizardData.memoryData.description || '';
+      const traits = wizardData.memoryData.personalityTraits || [];
+      const favoriteMemories = wizardData.memoryData.favoriteMemories || [];
 
       const response = await fetch('/api/memories', {
         method: 'POST',
@@ -197,6 +209,7 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
           relationship,
           description,
           personalityTraits: traits,
+          favoriteMemories,
           systemPrompt,
           anamAvatarId: avatarId,
           avatarImageUrl,
@@ -224,9 +237,62 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
   // Check if we're on the last step and can save
   const isLastStep = currentStep === 'voice';
   const canSave = isLastStep && !!voiceId && !!avatarId;
+  const memoryInfo = wizardData?.memoryData;
 
   return (
     <div className={cn('w-full max-w-2xl mx-auto', className)}>
+      {/* Stored info preview */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Información capturada</CardTitle>
+          <CardDescription>
+            Datos provenientes del formulario conversacional guardado en tu navegador.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingData ? (
+            <p className="text-sm text-muted-foreground">Cargando datos guardados...</p>
+          ) : memoryInfo ? (
+            <div className="space-y-2 text-sm">
+              <p>
+                <span className="font-medium">Nombre:</span> {memoryInfo.name || '—'}
+              </p>
+              <p>
+                <span className="font-medium">Relación:</span> {memoryInfo.relationship || '—'}
+              </p>
+              <p>
+                <span className="font-medium">Descripción:</span>{' '}
+                {memoryInfo.description || 'Sin descripción'}
+              </p>
+              <p>
+                <span className="font-medium">Rasgos:</span>{' '}
+                {memoryInfo.personalityTraits?.length
+                  ? memoryInfo.personalityTraits.join(', ')
+                  : 'Ninguno'}
+              </p>
+              <p>
+                <span className="font-medium">Recuerdos:</span>{' '}
+                {memoryInfo.favoriteMemories?.length
+                  ? memoryInfo.favoriteMemories.map((m, idx) => (
+                      <span key={m}>
+                        {idx > 0 ? ' · ' : ''}
+                        {m}
+                      </span>
+                    ))
+                  : 'Sin recuerdos'}
+              </p>
+              <p className="text-muted-foreground">
+                System prompt generado a partir de tus respuestas.
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-destructive">
+              No encontramos datos guardados. Vuelve al flujo anterior para completar la información.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Progress Steps */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -280,6 +346,7 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
         <CardContent>
           {currentStep === 'photo' && (
             <PhotoUpload
+              key={avatarImageUrl || 'photo-empty'}
               onAvatarCreated={handleAvatarCreated}
               initialImageUrl={avatarImageUrl || undefined}
             />
