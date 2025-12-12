@@ -1,11 +1,11 @@
 export interface AnamPersonaConfig {
-  name: string;
-  avatarId: string;
+  // Either personaId OR (avatarId with other config) is required
+  personaId?: string;
+  avatarId?: string;
   voiceId?: string;
   llmId?: string;
   systemPrompt?: string;
   maxSessionLengthSeconds?: number;
-  personaId?: string;
 }
 
 export interface AnamSessionOptions {

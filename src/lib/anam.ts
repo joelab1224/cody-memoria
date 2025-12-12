@@ -13,16 +13,66 @@ export class AnamClient {
     personaConfig: AnamPersonaConfig,
     sessionOptions?: AnamSessionOptions
   ): Promise<{ sessionToken: string }> {
+    // Ensure personaConfig has required fields
+    if (!personaConfig.personaId && !personaConfig.avatarId) {
+      throw new Error('Either personaId or avatarId must be provided in personaConfig');
+    }
+
+    // Build the request body according to Anam migration docs:
+    // https://docs.anam.ai/resources/migrating-legacy
+    // The personaConfig must be included in the POST request body
+    const requestBody: {
+      personaConfig: AnamPersonaConfig;
+      sessionOptions?: AnamSessionOptions;
+    } = {
+      personaConfig: {
+        ...(personaConfig.personaId && { personaId: personaConfig.personaId }),
+        ...(personaConfig.avatarId && { avatarId: personaConfig.avatarId }),
+        ...(personaConfig.voiceId && { voiceId: personaConfig.voiceId }),
+        ...(personaConfig.llmId && { llmId: personaConfig.llmId }),
+        ...(personaConfig.systemPrompt && { systemPrompt: personaConfig.systemPrompt }),
+        ...(personaConfig.maxSessionLengthSeconds !== undefined && {
+          maxSessionLengthSeconds: personaConfig.maxSessionLengthSeconds,
+        }),
+      },
+    };
+
+    // Only include sessionOptions if provided
+    if (sessionOptions) {
+      requestBody.sessionOptions = sessionOptions;
+    }
+
     const response = await fetch(`${ANAM_API_BASE}/auth/session-token`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        personaConfig,
-        sessionOptions,
-      }),
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Anam API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  async createPersona(config: {
+    name: string;
+    avatarId: string;
+    voiceId?: string;
+    llmId?: string;
+    systemPrompt?: string;
+  }): Promise<{ id: string; name: string }> {
+    const response = await fetch(`${ANAM_API_BASE}/personas`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(config),
     });
 
     if (!response.ok) {

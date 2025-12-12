@@ -32,6 +32,7 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
+    "@anam-ai/js-sdk": "^4.7.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@clerk/nextjs": "^6.36.2",
     "@prisma/client": "^6.0.0",

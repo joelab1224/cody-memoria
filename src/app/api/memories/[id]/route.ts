@@ -1,6 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
+
+// Helper function to get or create user in database
+async function getOrCreateUser(clerkUserId: string) {
+  let user = await prisma.user.findUnique({
+    where: { id: clerkUserId },
+  });
+
+  if (!user) {
+    const clerkUser = await currentUser();
+    
+    if (!clerkUser) {
+      throw new Error('Unable to get user information from Clerk');
+    }
+
+    user = await prisma.user.create({
+      data: {
+        id: clerkUserId,
+        email: clerkUser.emailAddresses[0]?.emailAddress || `user-${clerkUserId}@example.com`,
+        name: clerkUser.firstName && clerkUser.lastName
+          ? `${clerkUser.firstName} ${clerkUser.lastName}`
+          : clerkUser.firstName || clerkUser.username || null,
+        image: clerkUser.imageUrl || null,
+        emailVerified: clerkUser.emailAddresses[0]?.verification?.status === 'verified'
+          ? new Date()
+          : null,
+      },
+    });
+  }
+
+  return user;
+}
 
 export async function GET(
   request: NextRequest,
@@ -13,6 +44,9 @@ export async function GET(
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Ensure user exists in database
+    await getOrCreateUser(userId);
 
     const memory = await prisma.memory.findFirst({
       where: {

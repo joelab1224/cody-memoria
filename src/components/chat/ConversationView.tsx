@@ -28,6 +28,7 @@ export function ConversationView({ memory, className }: ConversationViewProps) {
   const [isMuted, setIsMuted] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [messages, setMessages] = React.useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
+  const [showAnamLab, setShowAnamLab] = React.useState(false);
   
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const anamClientRef = React.useRef<unknown>(null);
@@ -50,20 +51,35 @@ export function ConversationView({ memory, className }: ConversationViewProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           personaConfig: {
-            name: memory.name,
             avatarId: memory.anamAvatarId,
-            llmId: 'CUSTOMER_CLIENT_V1', // We're using ElevenLabs for conversation
+            llmId: 'CUSTOMER_CLIENT_V1', // Client-side LLM processing (ElevenLabs handles conversation)
             systemPrompt: memory.systemPrompt,
+            // Note: voiceId is optional when using CUSTOMER_CLIENT_V1 since ElevenLabs handles voice
           },
           sessionOptions: {
-            disableInputAudio: true, // ElevenLabs handles audio
+            disableInputAudio: true, // ElevenLabs handles audio input
           },
         }),
       });
 
       if (!sessionResponse.ok) {
         const errorData = await sessionResponse.json();
-        throw new Error(errorData.error || 'Failed to create Anam session');
+        const errorMessage = errorData.error || 'Failed to create Anam session';
+        
+        // If it's an Anam API error or the API indicates we should redirect, show Anam Lab iframe
+        if (
+          errorData.redirectToAnamLab ||
+          errorMessage.includes('Legacy session tokens') ||
+          errorMessage.includes('session token') ||
+          errorMessage.includes('Anam API error')
+        ) {
+          setShowAnamLab(true);
+          setError('Please configure your avatar in Anam Lab below');
+          setStatus('error');
+          return;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const { sessionToken } = await sessionResponse.json();
@@ -177,7 +193,22 @@ export function ConversationView({ memory, className }: ConversationViewProps) {
       }
     } catch (err) {
       console.error('Error starting conversation:', err);
-      setError(err instanceof Error ? err.message : 'Failed to start conversation');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to start conversation';
+      
+      // If it's an Anam session token error, show Anam Lab iframe
+      if (
+        errorMessage.includes('Legacy session tokens') ||
+        errorMessage.includes('session token') ||
+        errorMessage.includes('Anam API error') ||
+        errorMessage.includes('Failed to create Anam session')
+      ) {
+        setShowAnamLab(true);
+        setError('Please configure your avatar in Anam Lab below');
+        setStatus('error');
+        return;
+      }
+      
+      setError(errorMessage);
       setStatus('error');
     }
   };
@@ -248,7 +279,7 @@ export function ConversationView({ memory, className }: ConversationViewProps) {
             </div>
           )}
 
-          {status === 'error' && (
+          {status === 'error' && !showAnamLab && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted">
               <AlertCircle className="w-12 h-12 text-destructive mb-4" />
               <p className="text-destructive mb-4">{error}</p>
@@ -291,6 +322,46 @@ export function ConversationView({ memory, className }: ConversationViewProps) {
                 {msg.content}
               </div>
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Anam Lab Configuration Card */}
+      {showAnamLab && (
+        <Card className="mt-4">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Avatar Configuration Required</h3>
+              <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+                Your avatar needs to be configured in Anam Lab. Click the button below to open Anam Lab in a new tab.
+                Once you've configured your avatar, return here and click "Try Again" to reconnect.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <Button
+                  onClick={() => {
+                    window.open('https://lab.anam.ai/avatars?filter=custom', '_blank', 'noopener,noreferrer');
+                  }}
+                  size="lg"
+                  className="bg-gradient-to-r from-[#7A8A76] to-[#B8952F] text-white hover:opacity-90"
+                >
+                  Open Anam Lab
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowAnamLab(false);
+                    setError(null);
+                  }}
+                  variant="outline"
+                  size="lg"
+                >
+                  Dismiss
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                After configuring your avatar, make sure to update the avatar ID in your memory settings.
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}

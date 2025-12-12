@@ -327,8 +327,8 @@ export function ConversationalFlow() {
     
     setTimeout(() => {
       setIsProcessing(false);
-      // Los datos ya están guardados en localStorage, no mostrar popup
-      // Opcional: redirigir a otra página o mostrar mensaje visual
+      // Redirect to CreateMemoryWizardPt2 after saving data
+      window.location.href = '/memories/create?step=avatar';
     }, 2000);
   };
 

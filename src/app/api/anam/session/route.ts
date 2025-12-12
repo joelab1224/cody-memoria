@@ -17,9 +17,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!personaConfig.avatarId) {
+    // Validate that either personaId or avatarId is provided
+    if (!personaConfig.personaId && !personaConfig.avatarId) {
       return NextResponse.json(
-        { error: 'avatarId is required in personaConfig' },
+        { error: 'Either personaId or avatarId is required in personaConfig' },
         { status: 400 }
       );
     }
@@ -29,8 +30,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error creating Anam session:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create session';
+    
+    // Return error with a flag to indicate it's an Anam API error
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create session' },
+      { 
+        error: errorMessage,
+        redirectToAnamLab: errorMessage.includes('Legacy session tokens') || 
+                          errorMessage.includes('session token') ||
+                          errorMessage.includes('Anam API error')
+      },
       { status: 500 }
     );
   }

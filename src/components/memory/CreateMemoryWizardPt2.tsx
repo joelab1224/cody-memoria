@@ -57,60 +57,29 @@ const STEPS: { id: Step; title: string; description: string; icon: React.Element
   },
 ];
 
-const STORAGE_KEY = 'memoryWizardData';
+const STORAGE_KEY = 'memory-data';
 const FALLBACK_SYSTEM_PROMPT =
   'You are a loved one speaking with the user. Be warm, empathetic, and conversational. Speak naturally as if reminiscing about shared memories.';
 
-const buildSystemPrompt = (data: StoredWizardData): string => {
-  const memoryData = data.memoryData || {
-    name: '',
-    relationship: '',
-    description: '',
-    favoriteMemories: [],
-    personalityTraits: [],
-    hasPhoto: false,
-    hasAudio: false,
-    photoPreview: null,
-    audioPreview: null,
+// Transform memory-data format to StoredWizardData format
+const transformMemoryData = (data: any): StoredWizardData => {
+  return {
+    conversation: [], // ConversationalFlow doesn't store conversation entries
+    memoryData: {
+      name: data.name || '',
+      relationship: data.relationship || '',
+      description: data.description || '',
+      favoriteMemories: data.favoriteMemories || [],
+      personalityTraits: data.personalityTraits || [],
+      hasPhoto: !!data.photoUrl || !!data.photoPreview,
+      hasAudio: !!data.audioUrl,
+      photoPreview: data.photoUrl || data.photoPreview || null,
+      audioPreview: data.audioUrl || null,
+    },
+    metadata: {
+      completedAt: data.createdAt,
+    },
   };
-  const conversation = data.conversation || [];
-  const lines: string[] = [];
-
-  const persona = memoryData.name
-    ? `Habla como ${memoryData.name}${memoryData.relationship ? ` (${memoryData.relationship})` : ''}.`
-    : 'Habla como un ser querido cercano al usuario.';
-  lines.push(persona);
-
-  if (memoryData.description) {
-    lines.push(`Descripción: ${memoryData.description}`);
-  }
-
-  if (memoryData.personalityTraits?.length) {
-    lines.push(`Rasgos de personalidad: ${memoryData.personalityTraits.join(', ')}.`);
-  }
-
-  if (memoryData.favoriteMemories?.length) {
-    lines.push(`Recuerdos clave: ${memoryData.favoriteMemories.map((m) => `• ${m}`).join(' ')}`);
-  }
-
-  if (memoryData.hasPhoto || memoryData.hasAudio) {
-    const assets: string[] = [];
-    if (memoryData.hasPhoto) assets.push('foto disponible');
-    if (memoryData.hasAudio) assets.push('audio/voz disponible');
-    lines.push(`Recursos cargados: ${assets.join(' y ')}.`);
-  }
-
-  if (conversation?.length) {
-    const answers = conversation
-      .slice(-6) // keep recent for brevity
-      .map((entry) => `Q: ${entry.question} A: ${entry.answer}`)
-      .join(' | ');
-    lines.push(`Respuestas proporcionadas: ${answers}`);
-  }
-
-  lines.push('Sé cálido, empático y natural. Usa respuestas concisas (2-3 oraciones).');
-
-  return lines.join('\n');
 };
 
 export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizardProps) {
@@ -128,23 +97,51 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as StoredWizardData;
-        setWizardData(parsed);
-        setSystemPrompt(buildSystemPrompt(parsed));
-        // Surface any stored previews so the user sees what was captured
-        if (parsed.memoryData?.photoPreview) {
-          setAvatarImageUrl(parsed.memoryData.photoPreview);
+    
+    const loadDataAndGeneratePrompt = async () => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const transformedData = transformMemoryData(parsed);
+          setWizardData(transformedData);
+          
+          // Surface any stored previews so the user sees what was captured
+          if (transformedData.memoryData?.photoPreview) {
+            setAvatarImageUrl(transformedData.memoryData.photoPreview);
+          }
+
+          // Generate system prompt using OpenAI API
+          try {
+            const response = await fetch('/api/openai/generate-prompt', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ memoryData: parsed }),
+            });
+
+            if (response.ok) {
+              const { systemPrompt: generatedPrompt } = await response.json();
+              setSystemPrompt(generatedPrompt);
+            } else {
+              console.warn('Failed to generate prompt with OpenAI, using fallback');
+              setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
+            }
+          } catch (apiError) {
+            console.warn('Error calling OpenAI API, using fallback:', apiError);
+            setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
+          }
+        } else {
+          setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
         }
+      } catch (loadError) {
+        console.warn('Unable to load wizard data', loadError);
+        setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
+      } finally {
+        setIsLoadingData(false);
       }
-    } catch (loadError) {
-      console.warn('Unable to load wizard data', loadError);
-      setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
-    } finally {
-      setIsLoadingData(false);
-    }
+    };
+
+    loadDataAndGeneratePrompt();
   }, []);
 
   const canGoNext = () => {
