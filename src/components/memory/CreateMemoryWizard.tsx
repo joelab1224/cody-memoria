@@ -1,12 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronLeft, ChevronRight, Camera, Mic, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Camera, Mic, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { PhotoUpload } from './PhotoUpload';
 import { VoiceCreator } from './VoiceCreator';
-import { MemoryReview } from './MemoryReview';
 import { cn } from '@/lib/utils';
 
 interface CreateMemoryWizardProps {
@@ -14,7 +13,7 @@ interface CreateMemoryWizardProps {
   className?: string;
 }
 
-type Step = 'photo' | 'voice' | 'review';
+type Step = 'photo' | 'voice';
 
 const STEPS: { id: Step; title: string; description: string; icon: React.ElementType }[] = [
   {
@@ -29,13 +28,9 @@ const STEPS: { id: Step; title: string; description: string; icon: React.Element
     description: 'Clone or design a voice',
     icon: Mic,
   },
-  {
-    id: 'review',
-    title: 'Review & Save',
-    description: 'Add details and save your memory',
-    icon: CheckCircle,
-  },
 ];
+
+const MOCK_SYSTEM_PROMPT = "You are a loved one speaking with the user. Be warm, empathetic, and conversational. Speak naturally as if reminiscing about shared memories.";
 
 export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizardProps) {
   const [currentStep, setCurrentStep] = React.useState<Step>('photo');
@@ -53,8 +48,6 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
         return !!avatarId;
       case 'voice':
         return !!voiceId;
-      case 'review':
-        return false;
       default:
         return false;
     }
@@ -83,13 +76,7 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
     setVoiceId(id);
   };
 
-  const handleSave = async (data: {
-    name: string;
-    relationship: string;
-    description: string;
-    personalityTraits: string[];
-    systemPrompt: string;
-  }) => {
+  const handleSaveMemory = async () => {
     if (!avatarId || !voiceId) {
       setError('Avatar and voice are required');
       return;
@@ -103,7 +90,11 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...data,
+          name: 'Memory Avatar',
+          relationship: 'loved one',
+          description: '',
+          personalityTraits: [],
+          systemPrompt: MOCK_SYSTEM_PROMPT,
           anamAvatarId: avatarId,
           avatarImageUrl,
           voiceCloneId: voiceId,
@@ -123,6 +114,10 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
       setIsSaving(false);
     }
   };
+
+  // Check if we're on the last step and can save
+  const isLastStep = currentStep === 'voice';
+  const canSave = isLastStep && !!voiceId && !!avatarId;
 
   return (
     <div className={cn('w-full max-w-2xl mx-auto', className)}>
@@ -191,16 +186,6 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
             />
           )}
 
-          {currentStep === 'review' && (
-            <MemoryReview
-              avatarId={avatarId}
-              avatarImageUrl={avatarImageUrl}
-              voiceId={voiceId}
-              onSave={handleSave}
-              isSaving={isSaving}
-            />
-          )}
-
           {error && (
             <p className="mt-4 text-sm text-destructive text-center">{error}</p>
           )}
@@ -212,13 +197,24 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
         <Button
           variant="outline"
           onClick={goBack}
-          disabled={currentStepIndex === 0}
+          disabled={currentStepIndex === 0 || isSaving}
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
 
-        {currentStep !== 'review' && (
+        {isLastStep ? (
+          <Button onClick={handleSaveMemory} disabled={!canSave || isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Creating Memory...
+              </>
+            ) : (
+              'Create Memory'
+            )}
+          </Button>
+        ) : (
           <Button onClick={goNext} disabled={!canGoNext()}>
             Next
             <ChevronRight className="w-4 h-4 ml-2" />
