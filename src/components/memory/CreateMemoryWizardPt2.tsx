@@ -8,6 +8,33 @@ import { PhotoUpload } from './PhotoUpload';
 import { VoiceCreator } from './VoiceCreator';
 import { cn } from '@/lib/utils';
 
+type StoredConversationEntry = {
+  question: string;
+  answer: string;
+  timestamp: string;
+  type: 'voice' | 'file' | 'multi-select';
+};
+
+type StoredWizardData = {
+  conversation: StoredConversationEntry[];
+  memoryData: {
+    name: string;
+    relationship: string;
+    description: string;
+    favoriteMemories: string[];
+    personalityTraits: string[];
+    hasPhoto: boolean;
+    hasAudio: boolean;
+    photoPreview: string | null;
+    audioPreview?: string | null;
+  };
+  metadata: {
+    completedAt?: string;
+    totalQuestions?: number;
+    totalConversationEntries?: number;
+  };
+};
+
 interface CreateMemoryWizardProps {
   onComplete: (memoryId: string) => void;
   className?: string;
@@ -30,7 +57,61 @@ const STEPS: { id: Step; title: string; description: string; icon: React.Element
   },
 ];
 
-const MOCK_SYSTEM_PROMPT = "You are a loved one speaking with the user. Be warm, empathetic, and conversational. Speak naturally as if reminiscing about shared memories.";
+const STORAGE_KEY = 'memoryWizardData';
+const FALLBACK_SYSTEM_PROMPT =
+  'You are a loved one speaking with the user. Be warm, empathetic, and conversational. Speak naturally as if reminiscing about shared memories.';
+
+const buildSystemPrompt = (data: StoredWizardData): string => {
+  const memoryData = data.memoryData || {
+    name: '',
+    relationship: '',
+    description: '',
+    favoriteMemories: [],
+    personalityTraits: [],
+    hasPhoto: false,
+    hasAudio: false,
+    photoPreview: null,
+    audioPreview: null,
+  };
+  const conversation = data.conversation || [];
+  const lines: string[] = [];
+
+  const persona = memoryData.name
+    ? `Habla como ${memoryData.name}${memoryData.relationship ? ` (${memoryData.relationship})` : ''}.`
+    : 'Habla como un ser querido cercano al usuario.';
+  lines.push(persona);
+
+  if (memoryData.description) {
+    lines.push(`Descripción: ${memoryData.description}`);
+  }
+
+  if (memoryData.personalityTraits?.length) {
+    lines.push(`Rasgos de personalidad: ${memoryData.personalityTraits.join(', ')}.`);
+  }
+
+  if (memoryData.favoriteMemories?.length) {
+    lines.push(`Recuerdos clave: ${memoryData.favoriteMemories.map((m) => `• ${m}`).join(' ')}`);
+  }
+
+  if (memoryData.hasPhoto || memoryData.hasAudio) {
+    const assets: string[] = [];
+    if (memoryData.hasPhoto) assets.push('foto disponible');
+    if (memoryData.hasAudio) assets.push('audio/voz disponible');
+    lines.push(`Recursos cargados: ${assets.join(' y ')}.`);
+  }
+
+  if (conversation?.length) {
+    const answers = conversation
+      .slice(-6) // keep recent for brevity
+      .map((entry) => `Q: ${entry.question} A: ${entry.answer}`)
+      .join(' | ');
+    lines.push(`Respuestas proporcionadas: ${answers}`);
+  }
+
+  lines.push('Sé cálido, empático y natural. Usa respuestas concisas (2-3 oraciones).');
+
+  return lines.join('\n');
+};
 
 export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizardProps) {
   const [currentStep, setCurrentStep] = React.useState<Step>('photo');
@@ -39,8 +120,25 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
   const [voiceId, setVoiceId] = React.useState<string | null>(null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [wizardData, setWizardData] = React.useState<StoredWizardData | null>(null);
+  const [systemPrompt, setSystemPrompt] = React.useState<string>(FALLBACK_SYSTEM_PROMPT);
 
   const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as StoredWizardData;
+        setWizardData(parsed);
+        setSystemPrompt(buildSystemPrompt(parsed));
+      }
+    } catch (loadError) {
+      console.warn('Unable to load wizard data', loadError);
+      setSystemPrompt(FALLBACK_SYSTEM_PROMPT);
+    }
+  }, []);
 
   const canGoNext = () => {
     switch (currentStep) {
@@ -86,15 +184,20 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
     setError(null);
 
     try {
+      const memoryName = wizardData?.memoryData.name || 'Memory Avatar';
+      const relationship = wizardData?.memoryData.relationship || 'loved one';
+      const description = wizardData?.memoryData.description || '';
+      const traits = wizardData?.memoryData.personalityTraits || [];
+
       const response = await fetch('/api/memories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Memory Avatar',
-          relationship: 'loved one',
-          description: '',
-          personalityTraits: [],
-          systemPrompt: MOCK_SYSTEM_PROMPT,
+          name: memoryName,
+          relationship,
+          description,
+          personalityTraits: traits,
+          systemPrompt,
           anamAvatarId: avatarId,
           avatarImageUrl,
           voiceCloneId: voiceId,
@@ -107,6 +210,9 @@ export function CreateMemoryWizard({ onComplete, className }: CreateMemoryWizard
       }
 
       const memory = await response.json();
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
       onComplete(memory.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create memory');

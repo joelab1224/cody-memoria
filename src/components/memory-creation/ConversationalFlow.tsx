@@ -15,6 +15,15 @@ interface ConversationQuestion {
   errorMessage?: string;
 }
 
+interface ConversationEntry {
+  question: string;
+  answer: string;
+  timestamp: string;
+  type: ConversationQuestion['type'];
+}
+
+const STORAGE_KEY = 'memoryWizardData';
+
 const QUESTIONS: ConversationQuestion[] = [
   {
     id: 'name',
@@ -115,6 +124,7 @@ const PERSONALITY_TRAITS = [
 
 export function ConversationalFlow() {
   const [formData, setFormData] = useState<MemoryFormData>(INITIAL_FORM_DATA);
+  const [conversation, setConversation] = useState<ConversationEntry[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,6 +140,40 @@ export function ConversationalFlow() {
   const isLastQuestion = currentQuestionIndex === QUESTIONS.length - 1;
   const questionText = currentQuestion.question.replace('{name}', formData.name || 'esta persona');
   const questionSubtitle = currentQuestion.subtitle?.replace('{name}', formData.name || 'esta persona');
+
+  const persistWizardData = (
+    conversationEntries: ConversationEntry[],
+    data: MemoryFormData,
+    opts?: { completed?: boolean }
+  ) => {
+    if (typeof window === 'undefined') return;
+
+    const payload = {
+      conversation: conversationEntries,
+      memoryData: {
+        name: data.name,
+        relationship: data.relationship,
+        description: data.description,
+        favoriteMemories: data.favoriteMemories,
+        personalityTraits: data.personalityTraits,
+        hasPhoto: !!data.photoFile || !!data.photoPreview || !!data.photoUrl,
+        hasAudio: !!data.audioFile || !!data.audioPreview || !!data.audioUrl,
+        photoPreview: data.photoPreview,
+        audioPreview: data.audioPreview,
+      },
+      metadata: {
+        totalQuestions: QUESTIONS.length,
+        totalConversationEntries: conversationEntries.length,
+        ...(opts?.completed ? { completedAt: new Date().toISOString() } : {}),
+      },
+    };
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (storageError) {
+      console.warn('Unable to persist wizard data', storageError);
+    }
+  };
 
   // Fade in animation on mount and question change
   useEffect(() => {
@@ -191,6 +235,10 @@ export function ConversationalFlow() {
   const handleSubmit = async () => {
     let value: any;
     let isValid = true;
+    const questionForLog = questionText;
+    const timestamp = new Date().toISOString();
+    let conversationSnapshot = conversation;
+    let formDataSnapshot = formData;
 
     if (currentQuestion.type === 'multi-select') {
       value = formData.personalityTraits;
@@ -220,17 +268,63 @@ export function ConversationalFlow() {
     setIsProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 400));
 
-    // Update form data
     if (currentQuestion.type === 'voice') {
       if (currentQuestion.key === 'favoriteMemories') {
         const newMemories = [...formData.favoriteMemories, transcript.trim()];
-        updateFormData('favoriteMemories', newMemories);
+        const nextFormData = { ...formData, favoriteMemories: newMemories };
+        const nextConversation = [
+          ...conversation,
+          { question: questionForLog, answer: transcript.trim(), timestamp, type: currentQuestion.type },
+        ];
+        conversationSnapshot = nextConversation;
+        formDataSnapshot = nextFormData;
+        setConversation(nextConversation);
+        setFormData(nextFormData);
+        persistWizardData(nextConversation, nextFormData);
         setTranscript('');
         setIsProcessing(false);
         setIsFadingOut(false);
         return; // Allow adding more memories
       }
-      updateFormData(currentQuestion.key as keyof MemoryFormData, value);
+
+      const nextFormData = {
+        ...formData,
+        [currentQuestion.key]: value,
+      };
+      const nextConversation = [
+        ...conversation,
+        { question: questionForLog, answer: value, timestamp, type: currentQuestion.type },
+      ];
+      conversationSnapshot = nextConversation;
+      formDataSnapshot = nextFormData;
+      setConversation(nextConversation);
+      setFormData(nextFormData);
+      persistWizardData(nextConversation, nextFormData);
+    } else if (currentQuestion.type === 'multi-select') {
+      const answerText = formData.personalityTraits.join(', ');
+      const nextConversation = [
+        ...conversation,
+        { question: questionForLog, answer: answerText, timestamp, type: currentQuestion.type },
+      ];
+      const nextFormData = { ...formData };
+      conversationSnapshot = nextConversation;
+      formDataSnapshot = nextFormData;
+      setConversation(nextConversation);
+      persistWizardData(nextConversation, nextFormData);
+    } else if (currentQuestion.type === 'file') {
+      const fileName =
+        currentQuestion.key === 'photoFile'
+          ? formData.photoFile?.name || 'Foto cargada'
+          : formData.audioFile?.name || 'Audio cargado';
+      const nextConversation = [
+        ...conversation,
+        { question: questionForLog, answer: fileName, timestamp, type: currentQuestion.type },
+      ];
+      const nextFormData = { ...formData };
+      conversationSnapshot = nextConversation;
+      formDataSnapshot = nextFormData;
+      setConversation(nextConversation);
+      persistWizardData(nextConversation, nextFormData);
     }
 
     setIsProcessing(false);
@@ -238,6 +332,7 @@ export function ConversationalFlow() {
     setIsFadingOut(false);
 
     if (isLastQuestion) {
+      persistWizardData(conversationSnapshot, formDataSnapshot, { completed: true });
       handleFinalSubmit();
     } else {
       // Move to next question with fade in
