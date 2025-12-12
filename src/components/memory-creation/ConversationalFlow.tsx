@@ -199,13 +199,35 @@ export function ConversationalFlow() {
       value = currentQuestion.key === 'photoFile' ? formData.photoFile : formData.audioFile;
       isValid = !!value;
     } else if (currentQuestion.type === 'voice') {
-      if (!transcript.trim()) {
-        setError(currentQuestion.errorMessage || 'Por favor, comparte tu respuesta.');
-        return;
+      // Para favoriteMemories, permitir continuar si ya hay recuerdos guardados
+      if (currentQuestion.key === 'favoriteMemories') {
+        if (transcript.trim()) {
+          // Si hay transcript, agregar el recuerdo y permitir agregar más
+          const newMemories = [...formData.favoriteMemories, transcript.trim()];
+          updateFormData('favoriteMemories', newMemories);
+          setTranscript('');
+          setError(null); // Limpiar cualquier error previo
+          return; // Permite agregar más recuerdos sin avanzar
+        } else if (formData.favoriteMemories.length >= 1) {
+          // Si no hay transcript pero ya hay recuerdos, usar los recuerdos existentes
+          value = formData.favoriteMemories;
+          // La validación se hará abajo con este valor
+        } else {
+          // Si no hay transcript ni recuerdos, mostrar error
+          setError(currentQuestion.errorMessage || 'Comparte al menos un recuerdo especial.');
+          return;
+        }
+      } else {
+        // Para otras preguntas de voz, requerir transcript
+        if (!transcript.trim()) {
+          setError(currentQuestion.errorMessage || 'Por favor, comparte tu respuesta.');
+          return;
+        }
+        value = transcript;
       }
-      value = transcript;
     }
 
+    // Validar el valor (para favoriteMemories, value será el array de recuerdos)
     if (currentQuestion.validation && !currentQuestion.validation(value)) {
       setError(currentQuestion.errorMessage || 'Por favor, completa esta información.');
       return;
@@ -220,16 +242,8 @@ export function ConversationalFlow() {
     setIsProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 400));
 
-    // Update form data
-    if (currentQuestion.type === 'voice') {
-      if (currentQuestion.key === 'favoriteMemories') {
-        const newMemories = [...formData.favoriteMemories, transcript.trim()];
-        updateFormData('favoriteMemories', newMemories);
-        setTranscript('');
-        setIsProcessing(false);
-        setIsFadingOut(false);
-        return; // Allow adding more memories
-      }
+    // Update form data (solo si no es favoriteMemories, que ya se maneja arriba)
+    if (currentQuestion.type === 'voice' && currentQuestion.key !== 'favoriteMemories') {
       updateFormData(currentQuestion.key as keyof MemoryFormData, value);
     }
 
@@ -250,9 +264,40 @@ export function ConversationalFlow() {
 
   const handleFinalSubmit = async () => {
     setIsProcessing(true);
+    
+    // Preparar datos para JSON (sin File objects, solo datos serializables)
+    const jsonData = {
+      name: formData.name,
+      relationship: formData.relationship,
+      description: formData.description || '',
+      favoriteMemories: formData.favoriteMemories,
+      personalityTraits: formData.personalityTraits,
+      additionalInfo: formData.additionalInfo || '',
+      // URLs si existen (los archivos se subirán por separado)
+      photoUrl: formData.photoUrl || formData.photoPreview || null,
+      audioUrl: formData.audioUrl || null,
+      voiceCloneId: formData.voiceCloneId || null,
+      anamAvatarId: formData.anamAvatarId || null,
+      // Metadata
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    // Guardar en localStorage con formato legible
+    try {
+      localStorage.setItem('memory-data', JSON.stringify(jsonData, null, 2));
+      console.log('Memoria guardada en localStorage:', jsonData);
+    } catch (error) {
+      console.error('Error al guardar en localStorage:', error);
+      alert('Hubo un problema al guardar los datos. Por favor, intenta nuevamente.');
+      setIsProcessing(false);
+      return;
+    }
+    
     setTimeout(() => {
       setIsProcessing(false);
-      alert(`¡Memoria de ${formData.name} creada exitosamente!`);
+      // Los datos ya están guardados en localStorage, no mostrar popup
+      // Opcional: redirigir a otra página o mostrar mensaje visual
     }, 2000);
   };
 
