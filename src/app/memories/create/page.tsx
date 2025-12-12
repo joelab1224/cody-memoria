@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -25,3 +26,11 @@ export default function CreateMemoryPage() {
     </div>
   );
 }
+=======
+import { CreateMemoryWizard } from '@/components/memory-creation';
+
+export default function CreateMemoryPage() {
+  return <CreateMemoryWizard />;
+}
+
+>>>>>>> Stashed changes
