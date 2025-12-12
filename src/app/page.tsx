@@ -3,30 +3,36 @@
 import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function Home() {
+  const { t } = useLanguage();
   return (
     <>
+      {/* Language Selector */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-16 relative overflow-hidden dark:bg-[#171F2E]">
+      <section className="pt-16 relative overflow-hidden">
         <div className="max-w-[120rem] mx-auto relative">
           <div className="container px-5 mx-auto sm:px-7">
             <div className="max-w-[800px] mx-auto">
               <div className="text-center pb-16">
                 <div className="rounded-full mb-6 max-w-fit mx-auto bg-linear-to-r from-[#FF58D580] to-[#4E6EFF80] p-0.5">
-                  <div className="bg-white dark:bg-dark-primary py-2 text-sm items-center gap-2 px-5 inline-flex dark:text-white/90 rounded-full">
+                  <div className="bg-white py-2 text-sm items-center gap-2 px-5 inline-flex rounded-full">
                     <span>✨</span>
-                    <p>Preserving precious family memories</p>
+                    <p>{t.landing.hero.badge}</p>
                   </div>
                 </div>
 
-                <h1 className="text-gray-700 mx-auto font-bold mb-4 text-4xl sm:text-[50px] dark:text-white/90 sm:leading-[64px] max-w-[700px]">
-                  Keep your loved ones close forever with AI-powered memories
+                <h1 className="text-gray-700 mx-auto font-bold mb-4 text-4xl sm:text-[50px] sm:leading-[64px] max-w-[700px]">
+                  {t.landing.hero.title}
                 </h1>
-                <p className="max-w-[537px] text-center mx-auto dark:text-gray-400 text-gray-500 text-base">
-                  An empathetic AI that helps you preserve family stories through
-                  natural conversations. Create interactive memories of your loved
-                  ones with voice and personality.
+                <p className="max-w-[537px] text-center mx-auto text-gray-500 text-base">
+                  {t.landing.hero.description}
                 </p>
 
                 <div className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center">
@@ -35,10 +41,10 @@ export default function Home() {
                       <button 
                         className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
                         style={{
-                          background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                          background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                         }}
                       >
-                        Get Started Free
+                        {t.common.getStarted}
                       </button>
                     </SignUpButton>
                   </SignedOut>
@@ -47,17 +53,17 @@ export default function Home() {
                       href="/dashboard"
                       className="transition h-12 inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage-dark), var(--sage))",
+                        background: "linear-gradient(135deg, #4A5D49, #7A8A76)",
                       }}
                     >
-                      Go to Dashboard
+                      {t.common.goToDashboard}
                     </Link>
                   </SignedIn>
-                  <button className="rounded-full video-popup flex h-12 gap-3 items-center text-sm border bg-white dark:bg-white/10 dark:border-white/[0.05] dark:text-white border-gray-100 p-1.5 pr-6">
+                  <button className="rounded-full video-popup flex h-12 gap-3 items-center text-sm border bg-white border-gray-100 p-1.5 pr-6 text-gray-700">
                     <span 
                       className="size-9 rounded-full inline-flex items-center justify-center text-sm font-medium"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                        background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                       }}
                     >
                       <svg
@@ -73,13 +79,13 @@ export default function Home() {
                         />
                       </svg>
                     </span>
-                    Watch Demo
+                    {t.common.watchDemo}
                   </button>
                 </div>
               </div>
             </div>
             <div className="max-w-[1000px] mx-auto relative">
-              <div className="p-3 sm:p-[18px] relative z-30 rounded-[32px] border border-white/30 dark:border-white/10 bg-white/20">
+              <div className="p-3 sm:p-[18px] relative z-30 rounded-[32px] border border-white/30 bg-white/20">
                 <div className="w-full rounded-2xl block bg-gradient-to-br from-[#E6B8A2] via-[#B8952F] to-[#7A8A76] p-12 min-h-[400px] flex items-center justify-center">
                   <div className="grid md:grid-cols-3 gap-6 w-full">
                     {[
@@ -126,16 +132,15 @@ export default function Home() {
       </section>
 
       {/* Core Features Section */}
-      <section className="py-30 bg-gray-50 dark:bg-white/1 px-5">
+      <section className="py-30 bg-gray-50 px-5">
         <div className="max-w-[72rem] mx-auto">
           <div className="mb-12 text-center">
-            <h2 className="mb-3 font-bold text-gray-800 text-3xl dark:text-white/90 md:text-title-lg max-w-xl mx-auto">
-              Everything you need to preserve memories
+            <h2 className="mb-3 font-bold text-gray-800 text-3xl md:text-title-lg max-w-xl mx-auto">
+              {t.landing.features.title}
             </h2>
 
-            <p className="max-w-xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-              Powerful features designed with empathy and care to help you keep
-              your family stories alive forever.
+            <p className="max-w-xl mx-auto leading-6 text-gray-500">
+              {t.landing.features.subtitle}
             </p>
           </div>
 
@@ -143,51 +148,45 @@ export default function Home() {
             {[
               {
                 icon: "🎙️",
-                title: "Voice Cloning",
-                description:
-                  "Capture the unique voice of your loved ones using advanced AI voice cloning technology.",
+                title: t.landing.features.voiceCloning.title,
+                description: t.landing.features.voiceCloning.description,
               },
               {
                 icon: "💬",
-                title: "Natural Conversations",
-                description:
-                  "Have meaningful conversations with AI avatars that remember stories and personality traits.",
+                title: t.landing.features.conversations.title,
+                description: t.landing.features.conversations.description,
               },
               {
                 icon: "📸",
-                title: "Memory Creation",
-                description:
-                  "Create rich profiles with photos, stories, and personality details in a simple guided flow.",
+                title: t.landing.features.memoryCreation.title,
+                description: t.landing.features.memoryCreation.description,
               },
               {
                 icon: "🤖",
-                title: "AI Avatars",
-                description:
-                  "Interactive avatars powered by advanced AI that respond with context and emotion.",
+                title: t.landing.features.aiAvatars.title,
+                description: t.landing.features.aiAvatars.description,
               },
               {
                 icon: "🔍",
-                title: "Memory Exploration",
-                description:
-                  "Browse and search your memories by person, theme, or time period with ease.",
+                title: t.landing.features.memoryExploration.title,
+                description: t.landing.features.memoryExploration.description,
               },
               {
                 icon: "🔒",
-                title: "Private & Secure",
-                description:
-                  "Your memories are encrypted and stored securely. You control who can access them.",
+                title: t.landing.features.privacy.title,
+                description: t.landing.features.privacy.description,
               },
             ].map((feature, i) => (
               <div
                 key={i}
-                className="bg-white p-9 border border-gray-200 dark:bg-white/5 dark:border-white/3 rounded-[20px] shadow-[0px_30px_50px_-32px_rgba(107,110,148,0.04)]"
+                className="bg-white p-9 border border-gray-200 rounded-[20px] shadow-[0px_30px_50px_-32px_rgba(107,110,148,0.04)]"
               >
                 <div className="text-4xl mb-9">{feature.icon}</div>
 
-                <h3 className="mb-4 text-gray-800 dark:text-white/90 font-bold text-xl md:text-2xl">
+                <h3 className="mb-4 text-gray-800 font-bold text-xl md:text-2xl">
                   {feature.title}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-gray-500">
                   {feature.description}
                 </p>
               </div>
@@ -197,40 +196,40 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-14 md:py-28 dark:bg-dark-primary">
+      <section className="py-14 md:py-28">
         <div className="container px-5 mx-auto sm:px-7">
           <div className="max-w-2xl mx-auto mb-12 text-center">
-            <h2 className="mb-3 font-bold text-center text-gray-800 dark:text-white/90 text-3xl md:text-title-lg">
-              How it works
+            <h2 className="mb-3 font-bold text-center text-gray-800 text-3xl md:text-title-lg">
+              {t.landing.howItWorks.title}
             </h2>
-            <p className="max-w-2xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-              Create your first memory in just a few simple steps
+            <p className="max-w-2xl mx-auto leading-6 text-gray-500">
+              {t.landing.howItWorks.subtitle}
             </p>
           </div>
 
           <div className="max-w-[1008px] mx-auto">
-            <div className="bg-white dark:bg-white/5 p-8 md:p-12 rounded-[20px] border border-gray-200 dark:border-white/10">
+            <div className="bg-white p-8 md:p-12 rounded-[20px] border border-gray-200">
               <div className="grid md:grid-cols-5 gap-6">
                 {[
-                  { step: "1", title: "Add Details", desc: "Name, relationship, personality" },
-                  { step: "2", title: "Upload Photo", desc: "Add a photo for the avatar" },
-                  { step: "3", title: "Voice Sample", desc: "Record or upload audio" },
-                  { step: "4", title: "Memories", desc: "Share stories and traits" },
-                  { step: "5", title: "Chat", desc: "Start conversations" },
+                  { step: "1", title: t.landing.howItWorks.step1.title, desc: t.landing.howItWorks.step1.description },
+                  { step: "2", title: t.landing.howItWorks.step2.title, desc: t.landing.howItWorks.step2.description },
+                  { step: "3", title: t.landing.howItWorks.step3.title, desc: t.landing.howItWorks.step3.description },
+                  { step: "4", title: t.landing.howItWorks.step4.title, desc: t.landing.howItWorks.step4.description },
+                  { step: "5", title: t.landing.howItWorks.step5.title, desc: t.landing.howItWorks.step5.description },
                 ].map((step, i) => (
                   <div key={i} className="text-center">
                     <div 
                       className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-lg font-medium text-white"
                       style={{
-                        background: "linear-gradient(135deg, var(--sage), var(--soft-gold))",
+                        background: "linear-gradient(135deg, #7A8A76, #B8952F)",
                       }}
                     >
                       {step.step}
                     </div>
-                    <h4 className="font-medium mb-2 text-sm text-gray-800 dark:text-white/90">
+                    <h4 className="font-medium mb-2 text-sm text-gray-800">
                       {step.title}
                     </h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-500">
                       {step.desc}
                     </p>
                   </div>
@@ -248,23 +247,22 @@ export default function Home() {
             <div 
               className="p-12 md:p-16 rounded-[20px] text-center"
               style={{
-                background: "linear-gradient(135deg, var(--sage), var(--soft-gold), var(--peach))",
+                background: "linear-gradient(135deg, #7A8A76, #B8952F, #E6B8A2)",
               }}
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                Ready to preserve your memories?
+                {t.landing.cta.title}
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join families around the world who are keeping their loved ones
-                close through technology.
+                {t.landing.cta.description}
               </p>
               <SignedOut>
                 <SignUpButton mode="modal">
                   <button 
                     className="px-10 py-5 rounded-full text-lg font-medium bg-white hover:bg-gray-50 transition-colors"
-                    style={{ color: "var(--sage-dark)" }}
+                    style={{ color: "#4A5D49" }}
                   >
-                    Get Started Free
+                    {t.common.getStarted}
                   </button>
                 </SignUpButton>
               </SignedOut>
@@ -274,7 +272,7 @@ export default function Home() {
                   className="inline-block px-10 py-5 rounded-full text-lg font-medium bg-white hover:bg-gray-50 transition-colors"
                   style={{ color: "var(--sage-dark)" }}
                 >
-                  Go to Dashboard
+                  {t.common.goToDashboard}
                 </Link>
               </SignedIn>
             </div>
