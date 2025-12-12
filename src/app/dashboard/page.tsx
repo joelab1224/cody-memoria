@@ -240,44 +240,6 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </Link>
-
-            {/* Empty State */}
-            {!loading && filteredMemories.length === 0 && memories.length === 0 && (
-              <div className="col-span-full flex flex-col items-center justify-center py-16">
-                <div className="text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7A8A76] to-[#B8952F] flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <svg
-                      className="w-12 h-12 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#3A4B39] mb-2 font-['Outfit']">
-                    {t.dashboard.noMemories}
-                  </h3>
-                  <p className="text-sm text-[#7A8A76] mb-6">
-                    {t.dashboard.createFirstMemory}
-                  </p>
-                  <Link
-                    href="/memories/create"
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-full text-white text-sm font-medium transition-all"
-                    style={{
-                      background: "linear-gradient(135deg, #7A8A76, #B8952F)",
-                    }}
-                  >
-                    {t.dashboard.createMemory}
-                  </Link>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </main>
